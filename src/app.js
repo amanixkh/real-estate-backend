@@ -4,6 +4,8 @@ const path = require("path");
 
 const categoryRoutes = require("./routes/categoryRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/properties", propertyRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin/users", userRoutes);
 
 app.get("/", (req, res) => {
     res.json({
@@ -21,7 +25,7 @@ app.get("/", (req, res) => {
     });
 });
 
-const PORT = process.gitenv.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
