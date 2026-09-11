@@ -2,28 +2,35 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const categoryRoutes = require("./routes/categoryRoutes");
-const propertyRoutes = require("./routes/propertyRoutes");
-
 const app = express();
+
+require("./config/db");
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+const favoriteRoutes = require("./routes/favoriteRoutes");
+const inquiryRoutes = require("./routes/inquiryRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const propertyRoutes = require("./routes/propertyRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
+app.use("/api", favoriteRoutes);
+app.use("/api", inquiryRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/categories", categoryRoutes);
 app.use("/api/properties", propertyRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin/users", userRoutes);
 
 app.get("/", (req, res) => {
-    res.json({
-        message: "Real Estate API is running"
-    });
+  res.send("Real Estate Backend API");
 });
 
-const PORT = process.gitenv.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = app;

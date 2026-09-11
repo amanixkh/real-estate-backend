@@ -8,7 +8,7 @@ const addImage = async (property_id, image_url) => {
 };
 const getPropertyImages = async (property_id) => {
     const result = await pool.query(
-        'SELECT * FROM property_images WHERE property_id = $1', 
+        'SELECT * FROM property_images WHERE property_id = $1',
         [property_id]);
     return result.rows;
 };
