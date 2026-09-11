@@ -14,6 +14,46 @@ CREATE TABLE users (
 
 INSERT INTO roles (name) VALUES ('admin'), ('agent'), ('client');
 
+CREATE TABLE permissions (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE role_permissions (
+    id SERIAL PRIMARY KEY,
+    role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    permission_id INTEGER NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (role_id, permission_id)
+);
+
+INSERT INTO permissions (name, description) VALUES
+    ('create_property', 'Create properties'),
+    ('update_property', 'Update properties'),
+    ('delete_property', 'Delete properties'),
+    ('manage_users', 'Manage users and roles'),
+    ('manage_categories', 'Manage property categories'),
+    ('view_analytics', 'View agent analytics');
+
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT roles.id, permissions.id
+FROM roles
+CROSS JOIN permissions
+WHERE roles.name = 'admin';
+
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT roles.id, permissions.id
+FROM roles
+JOIN permissions ON permissions.name IN (
+    'create_property',
+    'update_property',
+    'delete_property',
+    'view_analytics'
+)
+WHERE roles.name = 'agent';
+
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL
