@@ -15,6 +15,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
 
 app.use("/api", favoriteRoutes);
 app.use("/api", inquiryRoutes);
@@ -23,6 +24,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/properties", propertyRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin/users", userRoutes);
+app.use("/api/agent/analytics", analyticsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Real Estate Backend API");
