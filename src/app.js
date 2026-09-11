@@ -1,8 +1,15 @@
 const express = require("express");
-
 const app = express();
 
+require("./config/db");
+
 app.use(express.json());
+
+const favoriteRoutes = require("./routes/favoriteRoutes");
+const inquiryRoutes = require("./routes/inquiryRoutes");
+
+app.use("/api", favoriteRoutes);
+app.use("/api", inquiryRoutes);
 
 app.get("/", (req, res) => {
   res.send("Real Estate Backend API");
