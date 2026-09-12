@@ -1,7 +1,7 @@
-const category = require('../models/categoryModels');
+const categoryModel = require('../models/categoryModels');
 const getAllCategories = async (req, res) => {
     try {
-        const categories = await category.getAllCategories();
+        const categories = await categoryModel.getAllCategories();
         res.status(200).json(categories);
     } catch (error) {
         res.status(500).json({
@@ -11,7 +11,7 @@ const getAllCategories = async (req, res) => {
 };
 const getCategory= async (req, res) => {
     try{
-        const category = await category.getCategoryById(req.params.id);
+        const category = await categoryModel.getCategoryById(req.params.id);
         if (!category) {
             return res.status(404).json({
                  message: 'Category not found' });
@@ -30,7 +30,7 @@ const createCategory = async (req, res) => {
             return res.status(400).json({
                 message: 'Name is required' });
             }
-     const category = await category.createCategory(name);
+    const category = await categoryModel.createCategory(name);
     res.status(201).json(category);
         } catch (error) {
     res.status(500).json({
@@ -41,7 +41,7 @@ const createCategory = async (req, res) => {
 const updateCategory = async (req, res) => {
     try {
         const { name } = req.body;
-        const category = await category.updateCategory(req.params.id, name);
+        const category = await categoryModel.updateCategory(req.params.id, name);
         if (!category) {
             return res.status(404).json({
                 message: 'Category not found' });
@@ -55,7 +55,7 @@ const updateCategory = async (req, res) => {
 };
 const deleteCategory = async (req, res) => {
     try {
-        const category = await category.deleteCategory(req.params.id);
+        const category = await categoryModel.deleteCategory(req.params.id);
         if (!category) {
             return res.status(404).json({
                 message: 'Category not found' });
