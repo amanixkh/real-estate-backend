@@ -38,8 +38,11 @@ const getAllProperties = async (filters = {}) => {
         count++;
     }
     query += ' ORDER BY p.id DESC';
-    const limit = Number.parseInt(filters.limit, 10);
+    const requestedLimit = Number.parseInt(filters.limit, 10);
     const page = Number.parseInt(filters.page, 10);
+    const limit = Number.isInteger(requestedLimit) && requestedLimit > 0
+        ? requestedLimit
+        : (Number.isInteger(page) && page > 0 ? 10 : undefined);
     if (Number.isInteger(limit) && limit > 0) {
         query += ` LIMIT $${count}`;
         values.push(Math.min(limit, 100));

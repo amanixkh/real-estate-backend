@@ -1,8 +1,8 @@
-const Propriety = require('../models/propertyModels');
-const PropertyImage = require('../models/propertyImgemodel');
+const propertyModel = require('../models/propertyModels');
+const propertyImageModel = require('../models/propertyImgemodel');
 const getProperties = async (req, res) => {
     try {
-        const properties = await Propriety.getAllProperties(req.query);
+        const properties = await propertyModel.getAllProperties(req.query);
         res.status(200).json(properties);
     } catch (error) {
         res.status(500).json({
@@ -12,12 +12,12 @@ const getProperties = async (req, res) => {
 };
 const getProperty = async (req, res) => {
     try {
-        const property = await Propriety.getPropertyById(req.params.id);
+        const property = await propertyModel.getPropertyById(req.params.id);
         if (!property) {
             return res.status(404).json({
                 message: 'Property not found' });
         }
-        const images = await PropertyImage.getPropertyImages(req.params.id);
+        const images = await propertyImageModel.getPropertyImages(req.params.id);
         res.status(200).json({ ...property, images });
     } catch (error) {
         res.status(500).json({
@@ -27,12 +27,12 @@ const getProperty = async (req, res) => {
 };
 const createProperty = async (req, res) => {
     try {
-        const { title, description, price, location, area, category_id, agent_id } = req.body;
+        const { title, description, price, location, city, area, category_id, agent_id } = req.body;
         if (!title || !price || !location) {
             return res.status(400).json({
                 message: 'Title, price, and location are required' });
         }
-        const property = await Propriety.createProperty({ title, description, price, location, area, category_id, agent_id });
+        const property = await propertyModel.createProperty({ title, description, price, location: location || city, area, category_id, agent_id });
         res.status(201).json(property);
     } catch (error) {
         res.status(500).json({
@@ -42,7 +42,10 @@ const createProperty = async (req, res) => {
 };
 const updateProperty = async (req, res) => {
     try {
-        const property = await Propriety.updateProperty(req.params.id, req.body);
+        const property = await propertyModel.updateProperty(req.params.id, {
+            ...req.body,
+            location: req.body.location || req.body.city
+        });
         if (!property) {
             return res.status(404).json({
                 message: 'Property not found' });
@@ -56,7 +59,7 @@ const updateProperty = async (req, res) => {
 };
 const deleteProperty = async (req, res) => {
     try {
-        const property = await Propriety.deleteProperty(req.params.id);
+        const property = await propertyModel.deleteProperty(req.params.id);
         if (!property) {
             return res.status(404).json({
                 message: 'Property not found' });
@@ -75,12 +78,12 @@ const uploadPropertyImage = async (req, res) => {
             return res.status(400).json({
                 message: 'image is required'});
              }
-        const property = await Propriety.getPropertyById(req.params.id);
+        const property = await propertyModel.getPropertyById(req.params.id);
         if (!property) {
             return res.status(404).json({
                 message: 'Property not found' });
         }
-        const image = await PropertyImage.addImage(req.params.id, `/uploads/properties/${req.file.filename}`);
+        const image = await propertyImageModel.addImage(req.params.id, `/uploads/properties/${req.file.filename}`);
         res.status(201).json({
             message: 'Image uploaded successfully',
             image});
@@ -90,5 +93,20 @@ const uploadPropertyImage = async (req, res) => {
             error: error.message  });
     }
 };
+const deletePropertyImage = async (req, res) => {
+    try {
+        const image = await propertyImageModel.deleteImage(req.params.image_id);
+        res.status(200).json({
+            message: 'Image deleted successfully',
+            image
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Failed to delete image',
+            error: error.message
+        });
+    }
+};
 module.exports = {getProperties, getProperty, createProperty, updateProperty, deleteProperty, uploadPropertyImage
+    , deletePropertyImage
 };
