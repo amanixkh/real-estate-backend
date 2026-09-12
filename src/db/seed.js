@@ -18,7 +18,8 @@ const rolePermissions = {
 const categories = ['Apartment', 'Villa', 'Land', 'Office'];
 const users = [
     { name: 'Admin User', email: 'admin@realestate.com', password: 'Admin123456', role: 'admin' },
-    { name: 'Agent User', email: 'agent@realestate.com', password: 'Agent123456', role: 'agent' }
+    { name: 'Agent User', email: 'agent@realestate.com', password: 'Agent123456', role: 'agent' },
+    { name: 'Client User', email: 'client@realestate.com', password: 'Client123456', role: 'client' }
 ];
 
 async function verifySchema(client) {
@@ -91,7 +92,7 @@ async function seedDatabase() {
                  SELECT $1, $2, $3, roles.id
                  FROM roles
                  WHERE roles.name = $4
-                 ON CONFLICT (email) DO NOTHING`,
+                 ON CONFLICT (email) DO UPDATE SET role_id = EXCLUDED.role_id`,
                 [user.name, user.email, hashedPassword, user.role]
             );
         }
